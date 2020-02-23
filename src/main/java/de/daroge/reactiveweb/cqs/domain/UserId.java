@@ -18,7 +18,7 @@ public class UserId {
     }
 
     private static boolean isValid(String data){
-        return data.matches("[a-z]{5,36}");
+        return data.matches("[a-z-]{36}");
     }
 
     private static void assertValid(String data){

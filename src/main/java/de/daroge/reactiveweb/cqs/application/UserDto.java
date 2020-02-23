@@ -1,16 +1,18 @@
 package de.daroge.reactiveweb.cqs.application;
 
 import de.daroge.reactiveweb.cqs.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Data()
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class UserDto extends Validating<UserDto> {
+
+    public UserDto(){
+        super();
+    }
 
     private String userId;
     @NotNull(message= "fistName is required")

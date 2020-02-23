@@ -1,7 +1,9 @@
 package de.daroge.reactiveweb.cqs.domain;
 
 import de.daroge.reactiveweb.cqs.util.AggregateRoot;
+import de.daroge.reactiveweb.cqs.util.DomainService;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @Getter
@@ -18,18 +20,27 @@ public class User {
         this.email = email;
     }
 
-
+    @DomainService
+    @RequiredArgsConstructor
     public static class UserFactory{
+        
+        private final IQueryUserRepository queryUserRepository;
+        private final EventPublisher publisher;
 
-        private IQueryUserRepository queryUserRepository;
-        UserFactory(IQueryUserRepository queryUserRepository){
-            this.queryUserRepository = queryUserRepository;
+        public  Mono<User> newUser(final UserId userId, final FullName fullName, final Email email){
+            return queryUserRepository.isKnown(email)
+                    .flatMap(known -> known ? createUser(userId,fullName,email) : Mono.error(new UserAlreadyInUse(email.getValue())));
         }
 
-        public Mono<User> newUser(final UserId userId, final FullName fullName, final Email email){
-            return queryUserRepository.findByEmail(email)
-                    .doOnNext( user ->  Mono.error(new UserAlreadyInUse(user.email.getValue())))
-                    .switchIfEmpty(Mono.defer(() -> Mono.just( new User(userId,fullName,email))));
+        public static User mapKnownUserFrom(String id, String firstName, String lastName, String email){
+            return new User(UserId.userId(id),FullName.fullName(firstName,lastName),Email.email(email));
+        }
+
+        private Mono<User> createUser(UserId userId,FullName fullName,Email email){
+            User user = new User(userId,fullName,email);
+            UserCreatedEvent userCreatedEvent = new UserCreatedEvent(user);
+            publisher.publish(userCreatedEvent);
+            return Mono.just(user);
         }
     }
 }

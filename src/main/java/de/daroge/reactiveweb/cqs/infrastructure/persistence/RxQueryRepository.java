@@ -1,6 +1,9 @@
 package de.daroge.reactiveweb.cqs.infrastructure.persistence;
 
 import com.github.davidmoten.rx.jdbc.Database;
+import com.github.davidmoten.rx.jdbc.QuerySelect;
+import com.github.davidmoten.rx.jdbc.ResultSetMapper;
+import de.daroge.reactiveweb.cqs.application.UserDto;
 import de.daroge.reactiveweb.cqs.domain.Email;
 import de.daroge.reactiveweb.cqs.domain.IQueryUserRepository;
 import de.daroge.reactiveweb.cqs.domain.User;
@@ -21,25 +24,34 @@ public class RxQueryRepository implements IQueryUserRepository {
 
     @Override
     public Mono<User> findById(UserId userId) {
-        return null; // TODO implementation
+        QuerySelect.Builder builder = this.database.select("select * post where domainId=?")
+                .parameter(userId.getValue());
+        Observable<UserDatabase> observable = getFrom(builder);
+        return Mono.from(RxReactiveStreams.toPublisher(observable.map(UserDatabase::toUser)));
     }
 
     @Override
-    public Mono<User> findByEmail(Email email) {
-        return null; // TODO implementation
+    public Mono<Boolean> isKnown(Email email) {
+        QuerySelect.Builder builder = this.database.select("select * post where email=?")
+                .parameter(email.getValue());
+        Observable<UserDatabase> observable = getFrom(builder);
+        return Mono.from(RxReactiveStreams.toPublisher(observable.isEmpty()));
     }
 
     @Override
     public Flux<User> findAll() {
-        Observable<UserDatabase> userData = this.database.select("select * from users")
-                .get(
-                        rs -> new UserDatabase(rs.getString("domainId"),
-                                rs.getString("firstName"),
-                                rs.getString("lastName"),
-                                rs.getString("email")
-                        )
-                )
+        QuerySelect.Builder builder = this.database.select("select * from users");
+        Observable<UserDatabase> observable = getFrom(builder);
+        return Flux.from(RxReactiveStreams.toPublisher(observable.map(UserDatabase::toUser)));
+    }
+
+    private Observable<UserDatabase> getFrom(QuerySelect.Builder builder) {
+        return builder.get( rs -> new
+                UserDatabase(rs.getInt("id"),
+                rs.getString("domainId"),
+                rs.getString("firstName"),
+                rs.getString("lastName"),
+                rs.getString("email")))
                 .asObservable();
-        return Flux.from(RxReactiveStreams.toPublisher(userData.map(UserDatabase::toUser)));
     }
 }

@@ -8,6 +8,6 @@ import reactor.core.publisher.Mono;
 public interface IQueryUserRepository {
 
     Mono<User> findById(UserId userId);
-    Mono<User> findByEmail(Email email);
+    Mono<Boolean> isKnown(Email email);
     Flux<User> findAll();
 }

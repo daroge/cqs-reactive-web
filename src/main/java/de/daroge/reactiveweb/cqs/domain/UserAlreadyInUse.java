@@ -1,7 +1,7 @@
 package de.daroge.reactiveweb.cqs.domain;
 
- class UserAlreadyInUse extends Exception {
-    UserAlreadyInUse(String msg){
+ public class UserAlreadyInUse extends RuntimeException {
+    public UserAlreadyInUse(String msg){
         super(msg);
     }
 }

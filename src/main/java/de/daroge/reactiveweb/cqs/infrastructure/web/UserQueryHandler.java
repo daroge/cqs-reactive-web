@@ -27,11 +27,12 @@ public class UserQueryHandler {
                 .flatMap(idModel -> queryUserService.find(idModel))
                 .flatMap(userDto -> ok().contentType(MediaType.APPLICATION_JSON)
                         .body(fromPublisher(Mono.just(userDto),UserDto.class)))
-                .switchIfEmpty(Mono.defer(() -> notFound().build()));
+                .onErrorResume(e -> ServerResponse.notFound().build());
     }
 
     public Mono<ServerResponse> all(ServerRequest serverRequest){
         return ok().contentType(MediaType.APPLICATION_JSON)
-                .body(fromPublisher(queryUserService.findAll(), UserDto.class));
+                .body(fromPublisher(queryUserService.findAll(), UserDto.class))
+                .onErrorResume(e -> ServerResponse.notFound().build());
     }
 }
