@@ -4,26 +4,32 @@ import com.github.davidmoten.rx.jdbc.Database;
 import de.daroge.reactiveweb.cqs.infrastructure.web.UserCommandHandler;
 import de.daroge.reactiveweb.cqs.infrastructure.web.UserQueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.RouterFunctions;
-import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.reactive.function.server.*;
+
+import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
+import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
+import static org.springframework.web.reactive.function.server.RequestPredicates.path;
 
 import javax.sql.DataSource;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.*;
-
+@EnableCaching
 @SpringBootApplication
 public class CQSApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CQSApplication.class);
+        SpringApplication application = new SpringApplication(CQSApplication.class);
+        application.setBannerMode(Banner.Mode.OFF);
+        application.setWebApplicationType(WebApplicationType.REACTIVE);
+        application.run(args);
     }
 
     @Autowired
@@ -34,10 +40,8 @@ public class CQSApplication {
 
     @Bean
     public RouterFunction<ServerResponse> route(){
-        return RouterFunctions
-                .route(GET("users").and(accept(MediaType.APPLICATION_JSON)),queryUserHandler::all)
-                .andRoute(GET("users/{userId}").and(accept(MediaType.APPLICATION_JSON)),queryUserHandler::getUser)
-                .andRoute(POST("users").and(accept(MediaType.APPLICATION_JSON)).and(contentType(MediaType.APPLICATION_JSON)),commandUserHandler::newUser);
+        return RouterFunctions.nest(path("/users").and(accept(MediaType.APPLICATION_JSON)).and(contentType(MediaType.APPLICATION_JSON)),
+                commandUserHandler.getRouterFunction().and(queryUserHandler.getRouterFunction()));
     }
 
     @Bean(destroyMethod = "shutdown")
