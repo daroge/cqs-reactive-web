@@ -1,0 +1,2 @@
+insert into users (id,domainId,firstName,lastName,email) values (1, 'afs9533d2ab79d', 'albert','Zilac','al@gmx.de');
+insert into users (id,domainId,firstName,lastName,email) values (2, '23s56sfra9533d','claude','Zilac','cl@gmx.de');
