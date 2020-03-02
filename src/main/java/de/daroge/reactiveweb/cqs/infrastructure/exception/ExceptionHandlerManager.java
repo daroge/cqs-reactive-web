@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 @Component
 public class ExceptionHandlerManager {
 
-    private final Map<String,AbstractExceptionHandler> handlers;
+    private final Map<String, IExceptionHandler> handlers;
 
-    public ExceptionHandlerManager(List<AbstractExceptionHandler> handlers) {
-        this.handlers = handlers.stream().collect(Collectors.toMap(AbstractExceptionHandler::getExceptionName, Function.identity()));
+    public ExceptionHandlerManager(List<IExceptionHandler> handlers) {
+        this.handlers = handlers.stream().collect(Collectors.toMap(IExceptionHandler::getExceptionName, Function.identity()));
     }
 
     public Optional<HttpStatus> getStatusForException(Throwable exception){
-        AbstractExceptionHandler handler;
+        IExceptionHandler handler;
         Throwable ex = exception;
         while (ex.getCause() != null && ex.getCause() != ex){
             ex = ex.getCause();

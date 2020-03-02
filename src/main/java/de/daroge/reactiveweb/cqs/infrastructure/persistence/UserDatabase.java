@@ -6,7 +6,7 @@ import de.daroge.reactiveweb.cqs.domain.User;
 import lombok.Value;
 
 @Value
-class UserDatabase {
+public class UserDatabase {
 
     private int id;
     private String domainId;

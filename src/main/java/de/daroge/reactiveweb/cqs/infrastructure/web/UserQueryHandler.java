@@ -5,7 +5,6 @@ import de.daroge.reactiveweb.cqs.application.service.api.IQueryUserService;
 import de.daroge.reactiveweb.cqs.domain.UserId;
 import de.daroge.reactiveweb.cqs.util.InfrastructureService;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
@@ -14,8 +13,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromPublisher;
-import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @Getter
 @InfrastructureService

@@ -1,16 +1,14 @@
 package de.daroge.reactiveweb.cqs.infrastructure.exception;
 
 import de.daroge.reactiveweb.cqs.domain.UserAlreadyInUse;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserAlreadyInUseHandler extends AbstractExceptionHandler{
+public class UserAlreadyInUseHandler implements IExceptionHandler {
 
     @Override
-    protected String getExceptionName() {
+    public String getExceptionName() {
         return UserAlreadyInUse.class.getName();
     }
     @Override

@@ -1,7 +1,6 @@
 package de.daroge.reactiveweb.cqs.domain;
 
 import lombok.Getter;
-
 import static java.util.UUID.randomUUID;
 
 @Getter
@@ -18,7 +17,7 @@ public class UserId {
     }
 
     private static boolean isValid(String data){
-        return data.matches("[a-z-]{36}");
+        return data.matches("[a-z0-9-]{10,}");
     }
 
     private static void assertValid(String data){

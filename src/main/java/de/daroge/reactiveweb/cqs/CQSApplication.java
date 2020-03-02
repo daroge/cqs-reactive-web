@@ -11,6 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.web.reactive.function.server.*;
@@ -19,6 +21,7 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RequestPredicates.path;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 @EnableCaching
@@ -39,6 +42,7 @@ public class CQSApplication {
     private UserCommandHandler commandUserHandler;
 
     @Bean
+    @PostConstruct
     public RouterFunction<ServerResponse> route(){
         return RouterFunctions.nest(path("/users").and(accept(MediaType.APPLICATION_JSON)).and(contentType(MediaType.APPLICATION_JSON)),
                 commandUserHandler.getRouterFunction().and(queryUserHandler.getRouterFunction()));
@@ -54,7 +58,17 @@ public class CQSApplication {
     }
 
     @Bean
-    public Database db(DataSource ds){
+    public Database database(DataSource ds){
         return Database.fromDataSource(ds);
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(){
+        return new JdbcTemplate(dataSource());
+    }
+
+    @Bean
+    public DataSourceTransactionManager dataSourceTransactionManager(){
+        return new DataSourceTransactionManager(dataSource());
     }
 }

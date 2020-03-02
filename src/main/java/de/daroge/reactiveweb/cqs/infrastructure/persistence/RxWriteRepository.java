@@ -8,18 +8,23 @@ import de.daroge.reactiveweb.cqs.domain.IWriteUserRepository;
 import de.daroge.reactiveweb.cqs.domain.User;
 import de.daroge.reactiveweb.cqs.util.InfrastructureService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import rx.Single;
 
+@Slf4j
 @InfrastructureService
-@RequiredArgsConstructor
 public class RxWriteRepository implements IWriteUserRepository {
 
     private Database database;
-    private EventPublisher eventPublisher;
+
+    public RxWriteRepository(Database database){
+        this.database = database;
+    }
 
     @Override
     public Mono<String> add(User user) {
+        log.debug("new userId " + user.getUserId().getValue());
         QueryUpdate.Builder builder = this.database.update("insert into users(domainId,firstName,lastName,email)" +
                         "values(?,?,?,?)")
                         .parameter(user.getUserId().getValue())

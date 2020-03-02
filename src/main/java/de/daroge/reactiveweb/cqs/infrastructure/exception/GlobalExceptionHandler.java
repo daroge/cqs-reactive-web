@@ -3,7 +3,6 @@ package de.daroge.reactiveweb.cqs.infrastructure.exception;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -13,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;

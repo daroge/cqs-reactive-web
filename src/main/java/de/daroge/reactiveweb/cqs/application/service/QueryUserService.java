@@ -10,10 +10,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @ApplicationService
-@RequiredArgsConstructor
 public class QueryUserService implements IQueryUserService {
 
     private IQueryUserRepository queryUserRepository;
+
+    public QueryUserService(IQueryUserRepository queryUserRepository){
+        this.queryUserRepository = queryUserRepository;
+    }
 
     @Override
     public Mono<UserDto> find(UserId userId) {
