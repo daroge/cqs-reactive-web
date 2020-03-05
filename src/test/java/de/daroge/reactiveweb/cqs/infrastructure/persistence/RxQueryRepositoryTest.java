@@ -11,6 +11,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.test.StepVerifier;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+
 @Sql("classpath:schema.sql")
 @Sql("classpath:data.sql")
 @ExtendWith(SpringExtension.class)
@@ -33,4 +37,10 @@ public class RxQueryRepositoryTest {
                 .expectNext(true)
                 .verifyComplete();
     }
+
+    @Test
+    public void testFindAll(){
+        assertThat(2,is(equalTo(queryUserRepository.findAll().collectList().block().size())));
+    }
+
 }

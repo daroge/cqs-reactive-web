@@ -25,11 +25,12 @@ public class User {
     public static class UserFactory{
         
         private final IQueryUserRepository queryUserRepository;
+        private final IWriteUserRepository writeUserRepository;
         private final EventPublisher publisher;
 
         public  Mono<User> newUser(final UserId userId, final FullName fullName, final Email email){
             return queryUserRepository.isKnown(email)
-                    .flatMap(known -> known ? createUser(userId,fullName,email) : Mono.error(new UserAlreadyInUse(email.getValue())));
+                    .flatMap(unKnown -> unKnown ? createUser(userId,fullName,email) : Mono.error(new UserAlreadyInUse(email.getValue())));
         }
 
         public static User mapKnownUserFrom(String id, String firstName, String lastName, String email){
@@ -38,6 +39,7 @@ public class User {
 
         private Mono<User> createUser(UserId userId,FullName fullName,Email email){
             User user = new User(userId,fullName,email);
+            writeUserRepository.add(user);
             UserCreatedEvent userCreatedEvent = new UserCreatedEvent(user);
             publisher.publish(userCreatedEvent);
             return Mono.just(user);

@@ -22,7 +22,7 @@ public class UserId {
 
     private static void assertValid(String data){
         if(!isValid(data)){
-            throw new IllegalArgumentException("The Syntax of the provided is wrong");
+            throw new IllegalArgumentException("The Syntax of the provided id is wrong");
         }
     }
 
