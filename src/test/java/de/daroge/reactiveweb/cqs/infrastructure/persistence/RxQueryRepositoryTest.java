@@ -6,6 +6,7 @@ import de.daroge.reactiveweb.cqs.domain.IQueryUserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -15,10 +16,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+@SpringBootTest
 @Sql("classpath:schema.sql")
 @Sql("classpath:data.sql")
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = CQSApplication.class)
 public class RxQueryRepositoryTest {
 
     @Autowired

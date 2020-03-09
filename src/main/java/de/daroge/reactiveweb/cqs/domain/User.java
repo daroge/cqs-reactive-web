@@ -28,8 +28,8 @@ public class User {
         private final IWriteUserRepository writeUserRepository;
         private final EventPublisher publisher;
 
-        public  Mono<User> newUser(final UserId userId, final FullName fullName, final Email email){
-            return queryUserRepository.isKnown(email)
+        public Mono<User> newUser(UserId userId, FullName fullName, Email email){
+                return (queryUserRepository.isKnown(email))
                     .flatMap(unKnown -> unKnown ? createUser(userId,fullName,email) : Mono.error(new UserAlreadyInUse(email.getValue())));
         }
 

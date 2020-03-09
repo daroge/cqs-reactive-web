@@ -1,17 +1,17 @@
 package de.daroge.reactiveweb.cqs.infrastructure.persistence;
 
-import de.daroge.reactiveweb.cqs.CQSApplication;
 import de.daroge.reactiveweb.cqs.domain.IWriteUserRepository;
 import de.daroge.reactiveweb.cqs.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.test.StepVerifier;
 
+@SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = CQSApplication.class)
 public class RxWriteRepositoryTest {
 
     @Autowired
@@ -24,5 +24,4 @@ public class RxWriteRepositoryTest {
                 .expectNext("asgeu74sfd2ab79")
                 .verifyComplete();
     }
-
 }
