@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @SpringBootTest
@@ -20,7 +21,7 @@ public class RxWriteRepositoryTest {
     @Test
     public void testNewUser(){
         User user = User.UserFactory.mapKnownUserFrom("asgeu74sfd2ab79","albert","lars","dar@gmx.de");
-        StepVerifier.create(writeUserRepository.add(user))
+        StepVerifier.create(Mono.fromCompletionStage(writeUserRepository.add(user)))
                 .expectNext("asgeu74sfd2ab79")
                 .verifyComplete();
     }

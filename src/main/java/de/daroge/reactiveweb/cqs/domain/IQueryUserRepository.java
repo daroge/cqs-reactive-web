@@ -1,13 +1,14 @@
 package de.daroge.reactiveweb.cqs.domain;
 
 import de.daroge.reactiveweb.cqs.util.Repository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.reactivestreams.Publisher;
+
+import java.util.concurrent.CompletionStage;
 
 @Repository
 public interface IQueryUserRepository {
 
-    Mono<User> findById(UserId userId);
-    Mono<Boolean> isKnown(Email email);
-    Flux<User> findAll();
+    CompletionStage<User> findById(UserId userId);
+    CompletionStage<Boolean> isKnown(Email email);
+    Publisher<User> findAll();
 }

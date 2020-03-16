@@ -27,8 +27,8 @@ public class WriteUserService implements IWriteUserService {
         UserId userId = userId(userDto.getUserId());
         FullName fullName = fullName(userDto.getFirstName(),userDto.getLastName());
         Email email = email(userDto.getEmail());
-        return userFactory.newUser(userId,fullName,email)
-                .flatMap(writeUserRepository::add);
+        return Mono.fromCompletionStage(userFactory.newUser(userId,fullName,email))
+                .flatMap( u -> Mono.fromCompletionStage(writeUserRepository.add(u)));
     }
 
 }

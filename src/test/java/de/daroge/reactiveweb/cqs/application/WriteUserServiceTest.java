@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -29,8 +31,8 @@ public class WriteUserServiceTest {
         User user = UserDataTest.userBuilder().withUserId("sgswtz25wsd52gstewr").withFirstName("albert").withLastName("smith")
                 .withEmail("smith@mail.com")
                 .buildUser();
-        when(userFactory.newUser(any(UserId.class),any(FullName.class), any(Email.class))).thenReturn(Mono.just(user));
-        when(writeUserRepository.add(any(User.class))).thenReturn(Mono.just("sgswtz25wsd52gstewr"));
+        when(userFactory.newUser(any(UserId.class),any(FullName.class), any(Email.class))).thenReturn(CompletableFuture.completedFuture(user));
+        when(writeUserRepository.add(any(User.class))).thenReturn(CompletableFuture.completedFuture("sgswtz25wsd52gstewr"));
     }
 
     @ParameterizedTest

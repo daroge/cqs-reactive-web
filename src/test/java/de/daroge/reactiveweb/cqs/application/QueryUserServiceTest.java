@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -32,7 +34,7 @@ public class QueryUserServiceTest {
         UserId userId = UserId.userId(id);
         User user = User.UserFactory.mapKnownUserFrom(id,"albert","smith","reg@mail.com");
 
-        when(queryUserRepository.findById(any(UserId.class))).thenReturn(Mono.just(user));
+        when(queryUserRepository.findById(any(UserId.class))).thenReturn(CompletableFuture.completedFuture(user));
 
         assertThat(queryUserService.find(userId).block()).isInstanceOf(UserDto.class);
         assertThat(queryUserService.find(userId).block().getUserId()).isEqualTo(id);

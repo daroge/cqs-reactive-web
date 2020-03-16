@@ -5,9 +5,10 @@ import de.daroge.reactiveweb.cqs.application.service.api.IQueryUserService;
 import de.daroge.reactiveweb.cqs.domain.IQueryUserRepository;
 import de.daroge.reactiveweb.cqs.domain.UserId;
 import de.daroge.reactiveweb.cqs.util.ApplicationService;
-import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.concurrent.Flow;
 
 @ApplicationService
 public class QueryUserService implements IQueryUserService {
@@ -20,13 +21,13 @@ public class QueryUserService implements IQueryUserService {
 
     @Override
     public Mono<UserDto> find(UserId userId) {
-        return queryUserRepository.findById(userId)
+        return Mono.fromCompletionStage(queryUserRepository.findById(userId))
                 .map(UserDto::toDto);
     }
 
     @Override
     public Flux<UserDto> findAll() {
-        return queryUserRepository.findAll()
+        return Flux.from(queryUserRepository.findAll())
                 .map(UserDto::toDto);
     }
 }

@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
 @Getter
 @AggregateRoot
 public class User {
@@ -28,21 +31,28 @@ public class User {
         private final IWriteUserRepository writeUserRepository;
         private final EventPublisher publisher;
 
-        public Mono<User> newUser(UserId userId, FullName fullName, Email email){
-                return (queryUserRepository.isKnown(email))
-                    .flatMap(unKnown -> unKnown ? createUser(userId,fullName,email) : Mono.error(new UserAlreadyInUse(email.getValue())));
+        public CompletionStage<User> newUser(UserId userId, FullName fullName, Email email){
+            CompletableFuture<User> completableFuture = new CompletableFuture<>();
+                queryUserRepository.isKnown(email)
+                    .whenComplete( (unkown , th) -> {
+                        if (unkown){
+                            completableFuture.complete(createUser(userId,fullName,email));
+                        }
+                        else  completableFuture.completeExceptionally(new UserAlreadyInUse(email.getValue()));
+                    });
+                return completableFuture;
         }
 
         public static User mapKnownUserFrom(String id, String firstName, String lastName, String email){
             return new User(UserId.userId(id),FullName.fullName(firstName,lastName),Email.email(email));
         }
 
-        private Mono<User> createUser(UserId userId,FullName fullName,Email email){
+        private User createUser(UserId userId,FullName fullName,Email email){
             User user = new User(userId,fullName,email);
             writeUserRepository.add(user);
             UserCreatedEvent userCreatedEvent = new UserCreatedEvent(user);
             publisher.publish(userCreatedEvent);
-            return Mono.just(user);
+            return user;
         }
     }
 }

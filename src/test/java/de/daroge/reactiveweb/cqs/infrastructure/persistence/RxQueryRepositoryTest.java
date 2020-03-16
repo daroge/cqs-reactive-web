@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,21 +29,21 @@ public class RxQueryRepositoryTest {
 
     @Test
     public void testIsNewFalse(){
-        StepVerifier.create(queryUserRepository.isKnown(Email.email("cl@gmx.de")))
+        StepVerifier.create(Mono.fromCompletionStage(queryUserRepository.isKnown(Email.email("cl@gmx.de"))))
                 .expectNext(false)
                 .verifyComplete();
     }
 
     @Test
     public void testIsNewTrue(){
-        StepVerifier.create(queryUserRepository.isKnown(Email.email("alain@gmx.de")))
+        StepVerifier.create(Mono.fromCompletionStage(queryUserRepository.isKnown(Email.email("alain@gmx.de"))))
                 .expectNext(true)
                 .verifyComplete();
     }
 
-    @Test
+   @Test
     public void testFindAll(){
-        assertThat(2,is(equalTo(queryUserRepository.findAll().collectList().block().size())));
+        assertThat(2,is(equalTo(Flux.from(queryUserRepository.findAll()).collectList().block().size())));
     }
 
 }

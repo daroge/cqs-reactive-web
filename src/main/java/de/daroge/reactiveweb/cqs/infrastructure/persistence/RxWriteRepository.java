@@ -8,6 +8,9 @@ import de.daroge.reactiveweb.cqs.util.InfrastructureService;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
 @Slf4j
 @InfrastructureService
 public class RxWriteRepository implements IWriteUserRepository {
@@ -19,7 +22,7 @@ public class RxWriteRepository implements IWriteUserRepository {
     }
 
     @Override
-    public Mono<String> add(User user) {
+    public CompletionStage<String> add(User user) {
         log.debug("new userId " + user.getUserId().getValue());
         QueryUpdate.Builder builder = this.database.update("insert into users(domainId,firstName,lastName,email)" +
                         "values(?,?,?,?)")
@@ -28,6 +31,6 @@ public class RxWriteRepository implements IWriteUserRepository {
                 .parameter(user.getFullName().getLastName())
                 .parameter(user.getEmail().getValue());
         int key = builder.execute();
-        return Mono.just(user.getUserId().getValue());
+        return CompletableFuture.completedStage(user.getUserId().getValue());
     }
 }
